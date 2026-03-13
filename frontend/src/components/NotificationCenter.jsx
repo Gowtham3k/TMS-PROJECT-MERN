@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { Bell, Check, Info, AlertTriangle, X } from 'lucide-react';
 
 const NotificationCenter = () => {
@@ -9,9 +9,7 @@ const NotificationCenter = () => {
 
     const fetchNotifications = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/notifications', {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            const res = await api.get('/api/notifications');
             const user = JSON.parse(localStorage.getItem('user'));
             const userId = user.id || user._id;
             const unread = res.data.filter(n => !n.isReadBy.includes(userId)).length;
@@ -30,9 +28,7 @@ const NotificationCenter = () => {
 
     const markAsRead = async (id) => {
         try {
-            await axios.put(`http://localhost:5000/api/notifications/read/${id}`, {}, {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            await api.put(`/api/notifications/read/${id}`, {});
             fetchNotifications();
         } catch (err) {
             console.error(err);
