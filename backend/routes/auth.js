@@ -168,7 +168,7 @@ router.get('/me', auth, async (req, res) => {
 
 // Update profile settings
 router.put('/profile', auth, async (req, res) => {
-    const { name, email, phoneNumber, bio, emailNotifications, pushNotifications } = req.body;
+    const { name, email, phoneNumber, bio, avatar, emailNotifications, pushNotifications } = req.body;
     try {
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ msg: 'User not found' });
@@ -176,7 +176,8 @@ router.put('/profile', auth, async (req, res) => {
         if (name) user.name = name;
         if (email) user.email = email;
         if (phoneNumber) user.phoneNumber = phoneNumber;
-        // Bio can be handled via localStorage or we could add it to model
+        if (bio !== undefined) user.bio = bio;
+        if (avatar !== undefined) user.avatar = avatar;
         if (emailNotifications !== undefined) user.emailNotifications = emailNotifications;
         if (pushNotifications !== undefined) user.pushNotifications = pushNotifications;
 

@@ -6,8 +6,8 @@ import {
     User as UserIcon, HelpCircle, FileText,
     TrendingUp, Calendar, Zap, MessageSquare, Shield
 } from 'lucide-react';
-import axios from 'axios';
 import { useApp } from '../../context/AppContext';
+import api from '../../api';
 import Header from '../layout/Header';
 
 const UserDashboard = ({ user }) => {
@@ -22,9 +22,7 @@ const UserDashboard = ({ user }) => {
     const fetchComplaints = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('http://localhost:5000/api/complaints', {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            const res = await api.get('/api/complaints');
             setAllComplaints(res.data);
             updateDashboard(res.data, selectedDate);
             setLoading(false);

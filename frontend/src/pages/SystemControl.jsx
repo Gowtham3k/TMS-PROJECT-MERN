@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { Power, ShieldAlert, CheckCircle2, AlertTriangle, Save, Loader2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
@@ -16,7 +16,7 @@ const SystemControl = () => {
 
     const fetchSettings = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/settings');
+            const res = await api.get('/api/settings');
             if (res.data.isSystemUnderMaintenance !== undefined) {
                 setMaintenanceMode(res.data.isSystemUnderMaintenance);
             }
@@ -35,11 +35,7 @@ const SystemControl = () => {
         setSaving(true);
         setMessage('');
         try {
-            const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:5000/api/settings/isSystemUnderMaintenance`,
-                { value: maintenanceMode },
-                { headers: { 'x-auth-token': token } }
-            );
+            await api.put(`/api/settings/isSystemUnderMaintenance`, { value: maintenanceMode });
             setMessage('Settings updated successfully!');
             setTimeout(() => setMessage(''), 3000);
         } catch (err) {
@@ -110,37 +106,13 @@ const SystemControl = () => {
                             </p>
                         </div>
 
-                        <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '60px', height: '34px' }}>
+                        <label className="switch">
                             <input
                                 type="checkbox"
                                 checked={maintenanceMode}
                                 onChange={handleToggle}
-                                style={{ opacity: 0, width: 0, height: 0 }}
                             />
-                            <span className="slider round" style={{
-                                position: 'absolute',
-                                cursor: 'pointer',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                backgroundColor: maintenanceMode ? '#ef4444' : '#374151',
-                                transition: '.4s',
-                                borderRadius: '34px'
-                            }}>
-                                <span style={{
-                                    position: 'absolute',
-                                    content: '""',
-                                    height: '26px',
-                                    width: '26px',
-                                    left: maintenanceMode ? '30px' : '4px',
-                                    bottom: '4px',
-                                    backgroundColor: 'white',
-                                    transition: '.4s',
-                                    borderRadius: '50%',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                                }}></span>
-                            </span>
+                            <span className="slider round"></span>
                         </label>
                     </div>
                 </div>

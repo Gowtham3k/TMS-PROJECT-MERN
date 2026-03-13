@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import { useNavigate } from 'react-router-dom';
 import { Database, ListChecks, Users, CheckCircle, Clock, Search, Settings as SettingsIcon, FileText, Send, X, Shield, Zap, TrendingUp, Plus, ArrowRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
@@ -24,10 +24,9 @@ const SuperAdminDashboard = ({ stats, user }) => {
 
     const fetchAll = async () => {
         try {
-            const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
             const [complaintsRes, auditRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/complaints', config),
-                axios.get('http://localhost:5000/api/audit', config)
+                api.get('/api/complaints'),
+                api.get('/api/audit')
             ]);
             setAllComplaints(complaintsRes.data);
             setAuditLogs(auditRes.data.slice(0, 10)); // Show last 10 audit logs
@@ -101,9 +100,7 @@ const SuperAdminDashboard = ({ stats, user }) => {
     const handleSendReport = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/reports', reportData, {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            await api.post('/api/reports', reportData);
             setIsReportModalOpen(false);
             alert('Report sent successfully!');
         } catch (err) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Download, FileText, Search, X, Calendar, User, ClipboardList, Send, CheckCircle, Eye } from 'lucide-react';
-import axios from 'axios';
+import api from '../api';
 import { useApp } from '../context/AppContext';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -23,16 +23,12 @@ const Reports = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const endpoint = isAdmin ? 'http://localhost:5000/api/reports/all' : 'http://localhost:5000/api/reports/my-reports';
-            const res = await axios.get(endpoint, {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            const endpoint = isAdmin ? '/api/reports/all' : '/api/reports/my-reports';
+            const res = await api.get(endpoint);
             setReports(res.data);
 
             if (isAdmin) {
-                const complaintsRes = await axios.get('http://localhost:5000/api/complaints', {
-                    headers: { 'x-auth-token': localStorage.getItem('token') }
-                });
+                const complaintsRes = await api.get('/api/complaints');
                 const resolved = complaintsRes.data.filter(c => c.status === 'Resolved' || c.status === 'Closed');
                 setResolvedComplaints(resolved);
             }
@@ -147,9 +143,7 @@ const Reports = () => {
     const handleSendReport = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/reports', reportForm, {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            await api.post('/api/reports', reportForm);
             setReportForm({ complaintId: '', title: '', recipientEmail: '' });
             alert('Report generated and sent successfully!');
             fetchData();

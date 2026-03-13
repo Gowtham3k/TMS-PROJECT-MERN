@@ -12,8 +12,10 @@ const UserSchema = new mongoose.Schema({
     },
     department: { type: String },
     programme: { type: String },
+    bio: { type: String },
     emailNotifications: { type: Boolean, default: true },
     pushNotifications: { type: Boolean, default: true },
+    avatar: { type: String },
     createdAt: { type: Date, default: Date.now }
 });
 

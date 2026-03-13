@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import { useNavigate } from 'react-router-dom';
 import { ListChecks, Users, CheckCircle, Clock, AlertCircle, ArrowRight, Shield, Activity, Filter, Plus } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
@@ -14,9 +14,7 @@ const AdminDashboard = ({ stats, user }) => {
     useEffect(() => {
         const fetchRecent = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/complaints', {
-                    headers: { 'x-auth-token': localStorage.getItem('token') }
-                });
+                const res = await api.get('/api/complaints');
                 setRecentComplaints(res.data.slice(0, 6));
                 setLoading(false);
             } catch (err) {

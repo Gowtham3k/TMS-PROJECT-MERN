@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { User, Bell, Globe, Moon, Sun, Save, ArrowLeft, Camera, Trash2, Upload, Shield, Lock, Megaphone, Send, Search, UserPlus, Edit, Mail, Phone, Building2, Layers, Key, X, Eye, EyeOff } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -100,13 +100,29 @@ const Settings = () => {
         }
     };
 
-    const handleSaveChanges = () => {
-        localStorage.setItem(`userBio_${userId}`, bio);
-        if (isSuperAdmin) {
-            localStorage.setItem(`userName_${userId}`, name);
-            localStorage.setItem(`userEmail_${userId}`, email);
+    const handleSaveChanges = async () => {
+        try {
+            const updateData = {
+                bio,
+                avatar
+            };
+            if (isSuperAdmin) {
+                updateData.name = name;
+                updateData.email = email;
+            }
+            
+            const res = await api.put('/api/auth/profile', updateData);
+            
+            // Update local storage with new user data
+            const currentUser = JSON.parse(localStorage.getItem('user'));
+            const updatedUser = { ...currentUser, ...res.data };
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            
+            alert('Changes saved successfully!');
+        } catch (err) {
+            console.error('Error saving changes:', err);
+            alert(err.response?.data?.msg || 'Error saving changes');
         }
-        alert('Changes saved successfully!');
     };
 
     const handlePasswordChange = async (e) => {
@@ -116,13 +132,10 @@ const Settings = () => {
             return;
         }
         try {
-            await axios.put('http://localhost:5000/api/auth/change-password',
-                {
-                    oldPassword: passwords.current,
-                    newPassword: passwords.new
-                },
-                { headers: { 'x-auth-token': localStorage.getItem('token') } }
-            );
+            await api.put('/api/auth/change-password', {
+                oldPassword: passwords.current,
+                newPassword: passwords.new
+            });
             alert('Password updated successfully!');
             setPasswords({ current: '', new: '', confirm: '' });
         } catch (err) {
@@ -132,10 +145,9 @@ const Settings = () => {
 
     const fetchAllUsers = async () => {
         try {
-            const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
             const [usersRes, masterRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/auth/users', config),
-                axios.get('http://localhost:5000/api/master-data', config)
+                api.get('/api/auth/users'),
+                api.get('/api/master-data')
             ]);
             setUsers(usersRes.data);
             setFilteredUsers(usersRes.data);
@@ -159,15 +171,15 @@ const Settings = () => {
 
     const fetchProfile = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/auth/me', {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            const res = await api.get('/api/auth/me');
             setNotifPreferences({
                 email: res.data.emailNotifications,
                 push: res.data.pushNotifications
             });
             setName(res.data.name);
             setEmail(res.data.email);
+            setBio(res.data.bio || '');
+            setAvatar(res.data.avatar || defaultAvatar);
         } catch (err) {
             console.error('Error fetching profile:', err);
         }
@@ -177,11 +189,9 @@ const Settings = () => {
         const newPrefs = { ...notifPreferences, [key]: val };
         setNotifPreferences(newPrefs);
         try {
-            await axios.put('http://localhost:5000/api/auth/profile', {
+            await api.put('/api/auth/profile', {
                 emailNotifications: newPrefs.email,
                 pushNotifications: newPrefs.push
-            }, {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
             });
         } catch (err) {
             console.error('Error updating notification setting:', err);
@@ -225,12 +235,11 @@ const Settings = () => {
     const handleUserSubmit = async (e) => {
         e.preventDefault();
         try {
-            const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
             if (editingUser) {
-                await axios.put(`http://localhost:5000/api/auth/users/${editingUser._id}`, userFormData, config);
+                await api.put(`/api/auth/users/${editingUser._id}`, userFormData);
                 alert('Account updated successfully!');
             } else {
-                await axios.post('http://localhost:5000/api/auth/register', userFormData, config);
+                await api.post('/api/auth/register', userFormData);
                 alert('New system user registered!');
             }
             setShowUserModal(false);
@@ -243,9 +252,7 @@ const Settings = () => {
     const handleUserDelete = async (id) => {
         if (window.confirm('DANGER: Permanently delete this account? This cannot be undone.')) {
             try {
-                await axios.delete(`http://localhost:5000/api/auth/users/${id}`, {
-                    headers: { 'x-auth-token': localStorage.getItem('token') }
-                });
+                await api.delete(`/api/auth/users/${id}`);
                 alert('Account purged.');
                 fetchAllUsers();
             } catch (err) {
@@ -257,9 +264,7 @@ const Settings = () => {
     const handleSendBroadcast = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/notifications/broadcast', broadcast, {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            await api.post('/api/notifications/broadcast', broadcast);
             alert('Broadcast sent to all users!');
             setBroadcast({ title: '', message: '' });
         } catch (err) {

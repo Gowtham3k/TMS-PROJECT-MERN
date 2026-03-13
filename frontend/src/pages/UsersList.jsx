@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { Search, UserPlus, Edit, Trash2, X, AlertCircle, Phone, Mail, Building2, Layers } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
@@ -24,10 +24,9 @@ const UsersList = () => {
 
     const fetchData = async () => {
         try {
-            const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
             const [usersRes, masterRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/auth/users', config),
-                axios.get('http://localhost:5000/api/master-data', config)
+                api.get('/api/auth/users'),
+                api.get('/api/master-data')
             ]);
 
             setUsers(usersRes.data);
@@ -46,10 +45,10 @@ const UsersList = () => {
     useEffect(() => {
         const q = searchQuery.toLowerCase();
         setFilteredUsers(users.filter(u =>
-            u.name.toLowerCase().includes(q) ||
-            u.email.toLowerCase().includes(q) ||
-            u.department?.toLowerCase().includes(q) ||
-            u.role.toLowerCase().includes(q)
+            (u.name || '').toLowerCase().includes(q) ||
+            (u.email || '').toLowerCase().includes(q) ||
+            (u.department || '').toLowerCase().includes(q) ||
+            (u.role || '').toLowerCase().includes(q)
         ));
     }, [searchQuery, users]);
 
@@ -78,12 +77,11 @@ const UsersList = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
             if (editingUser) {
-                await axios.put(`http://localhost:5000/api/auth/users/${editingUser._id}`, formData, config);
+                await api.put(`/api/auth/users/${editingUser._id}`, formData);
                 alert('User profile updated!');
             } else {
-                await axios.post('http://localhost:5000/api/auth/register', formData, config);
+                await api.post('/api/auth/register', formData);
                 alert('New user registered!');
             }
             setShowModal(false);
@@ -96,9 +94,7 @@ const UsersList = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to permanently remove this user account?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/auth/users/${id}`, {
-                    headers: { 'x-auth-token': localStorage.getItem('token') }
-                });
+                await api.delete(`/api/auth/users/${id}`);
                 alert('Account deleted.');
                 fetchData();
             } catch (err) {

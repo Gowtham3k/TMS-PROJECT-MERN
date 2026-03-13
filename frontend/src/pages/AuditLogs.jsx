@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import {
     Shield, Search, Calendar, User, Activity,
     Download, Filter, ChevronDown, UserPlus,
@@ -25,9 +25,7 @@ const AuditLogs = () => {
     const fetchLogs = async () => {
         try {
             setLoading(true);
-            const res = await axios.get('http://localhost:5000/api/audit', {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            const res = await api.get('/api/audit');
             setLogs(res.data);
             setLoading(false);
         } catch (err) {

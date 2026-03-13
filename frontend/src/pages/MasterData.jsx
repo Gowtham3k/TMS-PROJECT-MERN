@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import {
     Database, Plus, Search, Edit, Trash2, X,
     AlertCircle, ChevronLeft, Building2, ClipboardList,
@@ -31,9 +31,7 @@ const MasterData = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const res = await axios.get('http://localhost:5000/api/master-data', {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            const res = await api.get('/api/master-data');
             setAllData(res.data);
             setLoading(false);
         } catch (err) {
@@ -72,13 +70,9 @@ const MasterData = () => {
             if (!dataToSubmit.parentId) delete dataToSubmit.parentId;
 
             if (editingItem) {
-                await axios.put(`http://localhost:5000/api/master-data/${editingItem._id}`, dataToSubmit, {
-                    headers: { 'x-auth-token': localStorage.getItem('token') }
-                });
+                await api.put(`/api/master-data/${editingItem._id}`, dataToSubmit);
             } else {
-                await axios.post('http://localhost:5000/api/master-data', dataToSubmit, {
-                    headers: { 'x-auth-token': localStorage.getItem('token') }
-                });
+                await api.post('/api/master-data', dataToSubmit);
             }
             setShowModal(false);
             fetchData();
@@ -90,9 +84,7 @@ const MasterData = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Delete this record? This action cannot be undone.')) {
             try {
-                await axios.delete(`http://localhost:5000/api/master-data/${id}`, {
-                    headers: { 'x-auth-token': localStorage.getItem('token') }
-                });
+                await api.delete(`/api/master-data/${id}`);
                 fetchData();
             } catch (err) {
                 console.error(err);
@@ -134,9 +126,7 @@ const MasterData = () => {
         try {
             setLoading(true);
             for (const item of items) {
-                await axios.post('http://localhost:5000/api/master-data', item, {
-                    headers: { 'x-auth-token': localStorage.getItem('token') }
-                });
+                await api.post('/api/master-data', item);
             }
             alert('Extended data seeded!');
             fetchData();
