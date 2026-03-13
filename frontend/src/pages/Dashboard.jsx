@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import UserDashboard from '../components/dashboards/UserDashboard';
 import SuperAdminDashboard from '../components/dashboards/SuperAdminDashboard';
 import StaffDashboard from '../components/dashboards/StaffDashboard';
@@ -11,9 +11,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/complaints/stats', {
-                    headers: { 'x-auth-token': localStorage.getItem('token') }
-                });
+                const res = await api.get('/api/complaints/stats');
                 setStats(res.data);
             } catch (err) {
                 console.error(err);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { useNavigate } from 'react-router-dom';
 import {
     Send, Upload, X, FileText, CheckCircle2,
@@ -44,7 +44,7 @@ const RaiseComplaint = () => {
     useEffect(() => {
         const checkMaintenance = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/settings');
+                const res = await api.get('/api/settings');
                 if (res.data.isSystemUnderMaintenance === true) {
                     // Allow admins to skip maintenance? 
                     // Following user request: users shouldn't be able to raise.
@@ -60,9 +60,7 @@ const RaiseComplaint = () => {
         const fetchMasterData = async () => {
             console.log("Fetching Master Data...");
             try {
-                const res = await axios.get('http://localhost:5000/api/master-data', {
-                    headers: { 'x-auth-token': localStorage.getItem('token') }
-                });
+                const res = await api.get('/api/master-data');
                 const data = res.data || [];
                 console.log(`Total Master Data items received: ${data.length}`);
 
@@ -92,9 +90,7 @@ const RaiseComplaint = () => {
                 });
 
                 // Get stats
-                axios.get('http://localhost:5000/api/complaints/stats', {
-                    headers: { 'x-auth-token': localStorage.getItem('token') }
-                }).then(sRes => setTicketsCount(sRes.data.total + 1)).catch(() => { });
+                api.get('/api/complaints/stats').then(sRes => setTicketsCount(sRes.data.total + 1)).catch(() => { });
 
                 if (data.length > 0) {
                     let userDept = null;
@@ -137,9 +133,7 @@ const RaiseComplaint = () => {
         e.preventDefault();
         setSubmitting(true);
         try {
-            await axios.post('http://localhost:5000/api/complaints', formData, {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            await api.post('/api/complaints', formData);
             setSubmitting(false);
             alert('Your support request has been raised successfully!');
             navigate('/dashboard');

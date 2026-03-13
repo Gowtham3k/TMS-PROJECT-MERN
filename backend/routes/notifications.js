@@ -14,7 +14,7 @@ router.get('/', auth, async (req, res) => {
         }).sort({ createdAt: -1 }).limit(20);
         res.json(notifications);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -26,7 +26,7 @@ router.put('/read/:id', auth, async (req, res) => {
         });
         res.json({ msg: 'Marked as read' });
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -43,7 +43,7 @@ router.post('/broadcast', auth, checkRole(['ADMIN', 'SUPER_ADMIN']), async (req,
         await notification.save();
         res.json(notification);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 

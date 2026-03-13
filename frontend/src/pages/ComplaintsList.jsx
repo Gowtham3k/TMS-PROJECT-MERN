@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import {
     Search, Filter, Clock, CheckCircle,
     MoreVertical, X, User, MapPin, Tag,
@@ -30,9 +30,7 @@ const ComplaintsList = () => {
 
     const fetchComplaints = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/complaints', {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            const res = await api.get('/api/complaints');
             setComplaints(res.data);
             setFilteredComplaints(res.data);
         } catch (err) {
@@ -43,9 +41,7 @@ const ComplaintsList = () => {
     const fetchStaff = async () => {
         if (!isAdmin) return;
         try {
-            const res = await axios.get('http://localhost:5000/api/complaints/staff', {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            const res = await api.get('/api/complaints/staff');
             setStaffList(res.data);
         } catch (err) {
             console.error(err);
@@ -86,9 +82,7 @@ const ComplaintsList = () => {
 
     const submitFeedback = async () => {
         try {
-            await axios.put(`http://localhost:5000/api/complaints/${selectedComplaint._id}/feedback`, { rating, feedback }, {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            await api.put(`/api/complaints/${selectedComplaint._id}/feedback`, { rating, feedback });
             setShowRatingModal(false);
             fetchComplaints();
             alert(t('rating_submitted'));
@@ -99,10 +93,7 @@ const ComplaintsList = () => {
 
     const handleUpdateStatus = async () => {
         try {
-            await axios.put(`http://localhost:5000/api/complaints/${selectedComplaint._id}/status`,
-                { status: updateStatus, note: updateNote },
-                { headers: { 'x-auth-token': localStorage.getItem('token') } }
-            );
+            await api.put(`/api/complaints/${selectedComplaint._id}/status`, { status: updateStatus, note: updateNote });
             setShowModal(false);
             fetchComplaints();
             alert(t('status_updated_success'));
@@ -114,10 +105,7 @@ const ComplaintsList = () => {
     const handleAssign = async () => {
         if (!assigneeId) return alert(t('select_staff_err'));
         try {
-            await axios.put(`http://localhost:5000/api/complaints/${selectedComplaint._id}/assign`,
-                { adminId: assigneeId },
-                { headers: { 'x-auth-token': localStorage.getItem('token') } }
-            );
+            await api.put(`/api/complaints/${selectedComplaint._id}/assign`, { adminId: assigneeId });
             setShowModal(false);
             fetchComplaints();
             alert(t('ticket_assigned_success'));
@@ -129,9 +117,7 @@ const ComplaintsList = () => {
     const handleDelete = async (id) => {
         if (!window.confirm(t('delete_confirm_modal'))) return;
         try {
-            await axios.delete(`http://localhost:5000/api/complaints/${id}`, {
-                headers: { 'x-auth-token': localStorage.getItem('token') }
-            });
+            await api.delete(`/api/complaints/${id}`);
             setShowModal(false);
             fetchComplaints();
             alert(t('ticket_deleted_success'));

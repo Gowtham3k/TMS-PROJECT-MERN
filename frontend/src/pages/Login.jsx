@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { Mail, Lock, User, CheckCircle2, ClipboardList, Info, ArrowLeft, Eye, EyeOff } from 'lucide-react';
@@ -16,7 +16,7 @@ const Login = () => {
     React.useEffect(() => {
         const checkMaintenance = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/settings');
+                const res = await api.get('/api/settings');
                 if (res.data.isSystemUnderMaintenance === true) {
                     setMaintenanceMode(true);
                 }
@@ -31,7 +31,7 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+            const res = await api.post('/api/auth/login', { email, password });
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('user', JSON.stringify(res.data.user));
             navigate('/dashboard');

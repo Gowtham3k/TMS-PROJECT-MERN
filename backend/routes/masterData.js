@@ -10,7 +10,7 @@ router.get('/', auth, async (req, res) => {
         const data = await MasterData.find({ isActive: true }).populate('parentId', 'name type').lean();
         res.json(data);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -20,7 +20,7 @@ router.get('/:type', auth, async (req, res) => {
         const data = await MasterData.find({ type: req.params.type.toUpperCase(), isActive: true }).populate('parentId', 'name type').lean();
         res.json(data);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -37,7 +37,7 @@ router.post('/', auth, checkRole(['ADMIN', 'SUPER_ADMIN']), async (req, res) => 
 
         res.json(savedItem);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -54,7 +54,7 @@ router.put('/:id', auth, checkRole(['ADMIN', 'SUPER_ADMIN']), async (req, res) =
 
         res.json(updatedItem);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -70,7 +70,7 @@ router.delete('/:id', auth, checkRole(['ADMIN', 'SUPER_ADMIN']), async (req, res
 
         res.json({ msg: 'Item removed' });
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 

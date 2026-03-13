@@ -12,7 +12,7 @@ router.get('/', auth, checkRole(['SUPER_ADMIN']), async (req, res) => {
             .limit(100);
         res.json(logs);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 

@@ -11,6 +11,10 @@ const { logAction } = require('../middleware/logger');
 router.post('/register', async (req, res) => {
     const { name, email, password, role, department, phoneNumber, programme } = req.body;
     try {
+        if (!name || !email || !password) {
+            return res.status(400).json({ msg: 'Please provide name, email and password' });
+        }
+
         let user = await User.findOne({ email });
         if (user) return res.status(400).json({ msg: 'User already exists' });
 
@@ -18,7 +22,7 @@ router.post('/register', async (req, res) => {
             name,
             email,
             password,
-            role,
+            role: role || 'USER',
             department,
             phoneNumber,
             programme
@@ -36,8 +40,8 @@ router.post('/register', async (req, res) => {
 
         res.json({ msg: 'User created successfully', user: { id: user.id, name: user.name, email: user.email, role: user.role } });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error');
+        console.error('Registration Error:', err);
+        res.status(500).json({ msg: 'Server error during registration', error: err.message });
     }
 });
 
@@ -69,7 +73,7 @@ router.post('/login', async (req, res) => {
 
         res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, department: user.department, programme: user.programme } });
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -79,7 +83,7 @@ router.get('/users', auth, checkRole(['ADMIN', 'SUPER_ADMIN']), async (req, res)
         const users = await User.find().select('-password').lean();
         res.json(users);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -108,7 +112,7 @@ router.put('/users/:id', auth, checkRole(['SUPER_ADMIN']), async (req, res) => {
 
         res.json({ msg: 'User updated successfully' });
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -125,7 +129,7 @@ router.delete('/users/:id', auth, checkRole(['SUPER_ADMIN']), async (req, res) =
 
         res.json({ msg: 'User deleted successfully' });
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -148,7 +152,7 @@ router.put('/change-password', auth, async (req, res) => {
 
         res.json({ msg: 'Password changed successfully' });
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -158,7 +162,7 @@ router.get('/me', auth, async (req, res) => {
         const user = await User.findById(req.user.id).select('-password').lean();
         res.json(user);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -179,7 +183,7 @@ router.put('/profile', auth, async (req, res) => {
         await user.save();
         res.json(user);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 

@@ -30,7 +30,7 @@ router.post('/', auth, checkMaintenance, async (req, res) => {
 
         res.json(complaint);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -51,7 +51,7 @@ router.get('/', auth, async (req, res) => {
         }
         res.json(complaints);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -88,7 +88,7 @@ router.put('/:id/status', auth, async (req, res) => {
 
         res.json(complaint);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -101,7 +101,7 @@ router.get('/staff', auth, checkRole(['ADMIN', 'SUPER_ADMIN']), async (req, res)
         }).select('name email role department').lean();
         res.json(staff);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -143,7 +143,7 @@ router.put('/:id/assign', auth, checkRole(['ADMIN', 'SUPER_ADMIN']), async (req,
 
         res.json(complaint);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -174,7 +174,7 @@ router.put('/:id', auth, checkRole(['ADMIN', 'SUPER_ADMIN']), async (req, res) =
 
         res.json(complaint);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -198,7 +198,7 @@ router.delete('/:id', auth, async (req, res) => {
 
         res.json({ msg: 'Complaint removed' });
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -233,7 +233,7 @@ router.get('/stats', auth, async (req, res) => {
         const result = stats[0] || { total: 0, pending: 0, inProgress: 0, resolved: 0, closed: 0 };
         res.json(result);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -250,7 +250,7 @@ router.put('/:id/feedback', auth, checkRole(['USER']), async (req, res) => {
         await complaint.save();
         res.json(complaint);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 

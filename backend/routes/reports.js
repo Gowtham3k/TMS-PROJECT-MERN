@@ -37,7 +37,7 @@ router.post('/', auth, checkRole(['ADMIN', 'SUPER_ADMIN']), async (req, res) => 
 
         res.json(report);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -49,7 +49,7 @@ router.get('/my-reports', auth, async (req, res) => {
             .sort({ createdAt: -1 });
         res.json(reports);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
@@ -63,7 +63,7 @@ router.get('/all', auth, checkRole(['ADMIN', 'SUPER_ADMIN']), async (req, res) =
             .sort({ createdAt: -1 });
         res.json(reports);
     } catch (err) {
-        res.status(500).send('Server error');
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 
