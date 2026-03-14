@@ -43,7 +43,7 @@ const Login = () => {
     };
 
     return (
-        <div style={{
+        <div className="auth-container" style={{
             minHeight: '100vh',
             display: 'flex',
             background: '#f8fafc',
@@ -51,7 +51,7 @@ const Login = () => {
             overflow: 'hidden'
         }}>
             {/* Left Section - Hero & Illustration */}
-            <div style={{
+            <div className="auth-left" style={{
                 flex: 1.4,
                 background: 'white',
                 padding: '40px 60px',

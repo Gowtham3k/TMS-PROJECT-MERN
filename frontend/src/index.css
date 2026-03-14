@@ -385,3 +385,214 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(26px);
 }
+
+/* --- Responsive Styles --- */
+.mobile-header {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--card-bg-solid);
+  border-bottom: 1px solid var(--border-light);
+  z-index: 900;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.mobile-menu-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  z-index: 950;
+  backdrop-filter: blur(4px);
+  display: none;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  .mobile-header {
+    display: flex;
+  }
+  
+  .sidebar-backdrop {
+    display: block;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    z-index: 1000;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px;
+    padding-top: 80px; /* Account for mobile-header */
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Make tables scrollable */
+  .white-card {
+    padding: 16px !important;
+    margin-bottom: 16px !important;
+    overflow-x: auto !important;
+  }
+
+  /* Adjust grid layouts generally used in the app */
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Fix page headers on mobile */
+  header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px;
+  }
+  
+  header > div[style*="display: flex"] {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end !important;
+  }
+
+  /* Target search container to take full width and wrap */
+  header > div[style*="display: flex"] > div:first-child {
+    width: 100%;
+    order: 3;
+    margin-top: 12px;
+  }
+
+  /* Make inputs full width on mobile header */
+  header input {
+    width: 100% !important;
+  }
+
+  /* Fix modal forms side-by-side inputs on mobile */
+  .modal-content form > div[style*="display: flex"] {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .modal-content {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  /* Dashboard specific grid fixes */
+  div[style*="display: grid"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Dashboard List Items */
+  .list-item-hover {
+    padding: 16px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .list-item-hover > div {
+    max-width: 100%;
+  }
+
+  /* Reduce heavy paddings on mobile */
+  div[style*="padding: 24px 32px"], 
+  div[style*="padding:24px 32px"] {
+    padding: 16px !important;
+  }
+
+  div[style*="padding: 40px"], 
+  div[style*="padding:40px"] {
+    padding: 20px !important;
+  }
+
+  div[style*="padding: 36px 40px"], 
+  div[style*="padding:36px 40px"] {
+    padding: 20px !important;
+  }
+
+  .hero-section {
+    padding: 32px 24px !important;
+    flex-direction: column !important;
+    text-align: center;
+  }
+
+  .hero-section > div {
+    max-width: 100% !important;
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .hero-section h1 {
+    font-size: 32px !important;
+  }
+
+  .hero-section p {
+    font-size: 15px !important;
+  }
+
+  .hero-section button {
+    margin: 0 auto;
+  }
+
+  .auth-container {
+    flex-direction: column !important;
+    overflow-y: auto !important;
+  }
+
+  .auth-left {
+    display: none !important;
+  }
+
+  .auth-container > div:last-child {
+    padding: 20px !important;
+    width: 100% !important;
+    flex: none !important;
+    min-height: 100vh;
+  }
+
+  /* Make forms stack horizontally explicitly */
+  form div[style*="display: flex"] {
+    flex-direction: column !important;
+  }
+  
+  /* Retain horizontal alignment for input decorators like icons/buttons */
+  form div[style*="position: relative"] {
+    flex-direction: row !important;
+  }
+
+  /* Some additional fixes for any unhandled flex rows */
+  .flex-mobile-col {
+    flex-direction: column !important;
+  }
+}

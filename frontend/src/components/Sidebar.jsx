@@ -3,7 +3,7 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Home, LayoutGrid, Database, ListChecks, Users, FileText, Settings, LogOut, Plus, Shield, Power } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, setIsOpen }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t } = useApp();
@@ -16,17 +16,14 @@ const Sidebar = () => {
     };
 
     return (
-        <div className="sidebar" style={{ transition: 'all 0.3s ease' }}>
+        <div className={`sidebar ${isOpen ? 'open' : ''}`} style={{ transition: 'all 0.3s ease' }}>
             <div className="logo" style={{ marginBottom: 50, display: 'flex', alignItems: 'center', width: '100%' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ background: '#3b82f6', width: 40, height: 40, borderRadius: 10, display: 'grid', placeContent: 'center', boxShadow: '0 4px 10px rgba(59, 130, 246, 0.5)' }}>
-                        <span style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>T</span>
-                    </div>
+                <NavLink to="/home" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', color: 'inherit' }}>
                     <span style={{ fontSize: 28, fontWeight: 700, letterSpacing: '1px' }}>TMS</span>
-                </div>
+                </NavLink>
             </div>
 
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            <nav onClick={() => setIsOpen && setIsOpen(false)} style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
                 <NavLink to="/home" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     <Home size={22} /> {t('home')}
                 </NavLink>
